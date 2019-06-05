@@ -30,9 +30,9 @@ public class Recycler_View extends RecyclerView.Adapter<Recycler_View.RecyclerVi
     TextView headline, anchor;
     ImageView img;
     private Context context;
-    ArrayList<String> items=new ArrayList<String>();
+    ArrayList<list> items=new ArrayList<list>();
 
-    public Recycler_View(Context context,ArrayList<String> head) {
+    public Recycler_View(Context context,ArrayList<list> head) {
         this.context = context;
         items=head;
     }
@@ -83,9 +83,9 @@ public class Recycler_View extends RecyclerView.Adapter<Recycler_View.RecyclerVi
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder recyclerViewHolder, int i) {
 //        List<String> data = jsonParse(i);
-        recyclerViewHolder.newsHeadline.setText(items.get(i));
-//        Picasso.with(context).load(data.get(1)).into(recyclerViewHolder.newsImage);
-//        recyclerViewHolder.newsSource.setText(data.get(2));
+        recyclerViewHolder.newsHeadline.setText(String.valueOf(items.get(i).getTitle()));
+        Picasso.with(context).load(String.valueOf(items.get(i).getImage())).into(recyclerViewHolder.newsImage);
+        recyclerViewHolder.newsSource.setText(String.valueOf(items.get(i).getSource()));
 
     }
 

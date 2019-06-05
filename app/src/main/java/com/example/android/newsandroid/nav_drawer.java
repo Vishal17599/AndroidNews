@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -32,7 +31,7 @@ import java.util.ArrayList;
 
 public class nav_drawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    public ArrayList<String> blue = new ArrayList<String>();
+    private ArrayList<list> blue = new ArrayList<list>();
     private TextView mainpicText;
     private ImageView mainpic;
     private RequestQueue mqueue;
@@ -55,24 +54,31 @@ public class nav_drawer extends AppCompatActivity
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(response!=null){
-                            Log.d("RESPONSE",response.toString());
-                            try {
-                                JSONArray jsonArray = response.getJSONArray("articles");
-                                for (int i = 1; i < jsonArray.length(); i++) {
-                                    JSONObject news = jsonArray.getJSONObject(i+1);
-                                    String title = news.getString("title");
-                                    String image = news.getString("urlToImage");
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("articles");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject news = jsonArray.getJSONObject(i);
+                                String title = news.getString("title");
+                                String image = news.getString("urlToImage");
+                                JSONObject source=news.getJSONObject("source");
+                                String name=source.getString("name");
+                                if(i==0){
                                     mainpicText.setText(title);
                                     Picasso.with(nav_drawer.this).load(image)
                                             .into(mainpic);
-                                    blue.add(title);
+                                    continue;
                                 }
-                                newsList.setAdapter(new Recycler_View(getApplicationContext(), blue));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                list mlist=new list();
+                                mlist.setTitle(title);
+                                mlist.setImage(image);
+                                mlist.setSource(name);
+                                blue.add(mlist);
                             }
+                            newsList.setAdapter(new Recycler_View(getApplicationContext(), blue));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
