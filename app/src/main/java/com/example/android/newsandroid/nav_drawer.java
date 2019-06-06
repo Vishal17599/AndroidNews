@@ -1,8 +1,10 @@
 package com.example.android.newsandroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,11 +38,13 @@ public class nav_drawer extends AppCompatActivity
     private TextView mainpicText;
     private ImageView mainpic;
     private RequestQueue mqueue;
+    String i_title,i_img,i_source,i_description;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        String title,content,imageUrl;
+
         setContentView(R.layout.activity_nav_drawer);
         mainpicText = (TextView) findViewById(R.id.mainpicText);
         mainpic = findViewById(R.id.mainpic);
@@ -49,6 +54,7 @@ public class nav_drawer extends AppCompatActivity
 
         final RecyclerView newsList = findViewById(R.id.newsList);
         newsList.setLayoutManager(new LinearLayoutManager(this));
+        ViewCompat.setNestedScrollingEnabled(newsList, false);
         String url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=987cf3634d544e6d9b43a86e5b967b30";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -60,18 +66,24 @@ public class nav_drawer extends AppCompatActivity
                                 JSONObject news = jsonArray.getJSONObject(i);
                                 String title = news.getString("title");
                                 String image = news.getString("urlToImage");
-                                JSONObject source=news.getJSONObject("source");
-                                String name=source.getString("name");
-                                if(i==0){
+                                JSONObject source = news.getJSONObject("source");
+                                String name = source.getString("name");
+                                String dus =news.getString("content");
+                                if (i == 0) {
                                     mainpicText.setText(title);
+                                    i_title=title;
+                                    i_img=image;
+                                    i_source=name;
+                                    i_description=dus;
                                     Picasso.with(nav_drawer.this).load(image)
                                             .into(mainpic);
                                     continue;
                                 }
-                                list mlist=new list();
+                                list mlist = new list();
                                 mlist.setTitle(title);
                                 mlist.setImage(image);
                                 mlist.setSource(name);
+                                mlist.setDescription(dus);
                                 blue.add(mlist);
                             }
                             newsList.setAdapter(new Recycler_View(getApplicationContext(), blue));
@@ -88,6 +100,17 @@ public class nav_drawer extends AppCompatActivity
         });
         mqueue.add(request);
 
+        mainpic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(nav_drawer.this,expand_news.class);
+                intent.putExtra("title",i_title);
+                intent.putExtra("image",i_img);
+                intent.putExtra("source",i_source);
+                intent.putExtra("content",i_description);
+                startActivity(intent);
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

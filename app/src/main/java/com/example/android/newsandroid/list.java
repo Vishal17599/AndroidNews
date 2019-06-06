@@ -4,9 +4,17 @@ public class list {
     private String title;
     private String image;
     private String source;
-
+    private String description;
     public String getTitle() {
         return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getImage() {
